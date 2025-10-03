@@ -10,10 +10,18 @@ all:
 	@$(MAKE) $(NAME)
 
 $(NAME):
-	docker ps
+	docker image ls
+# $(RSYNC_CMD)
+# docker ps
 
 save:
 	$(RSYNC_CMD)
+
+create-context:
+	docker context create remote --docker "host=ssh://ppontet@127.0.0.1:2200"
+
+context:
+	docker context use remote
 
 debug-print:
 	@ls -Al -R --color=auto --ignore=.git

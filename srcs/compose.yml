@@ -1,0 +1,32 @@
+services:
+  nginx:
+    image: nginx
+    build: ./nginx
+    networks:
+      - basic-network
+    ports:
+      - "80:80"
+    volumes:
+      - volume2:/website
+  mariadb:
+    image: mariadb
+    build: ./mariadb
+    networks:
+      - basic-network
+    volumes:
+      - volume1:/database
+  wordpress:
+    image: wordpress
+    build: ./wordpress
+    networks:
+      - basic-network
+    volumes:
+      - volume2:/website
+
+volumes:
+  volume1: #wordpress database : mariadb
+  volume2: #wordpress website files
+
+networks:
+  basic-network: # Accessible only by ports from nginx
+    driver: bridge

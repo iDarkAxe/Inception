@@ -21,13 +21,13 @@ rsync -r ~/goinfre/Alpine ~/sgoinfre/ --progress
 If it's not present :
 
 ```sh
-rsync -e 'ssh -p 2200' ./* ppontet@127.0.0.1:~/Inception --progress
+rsync -r -e 'ssh -p 2200' ./* ppontet@127.0.0.1:~/Inception --progress
 ```
 
 To save your progress :
 
 ```sh
-rsync -e 'ssh -p 2200' ./Inception* ppontet@127.0.0.0:~/Documents/Inception/backup --progress
+rsync -r -e 'ssh -p 2200' ./Inception* ppontet@127.0.0.0:~/Documents/Inception/backup --progress
 ```
 
 ## Some Vars ##
