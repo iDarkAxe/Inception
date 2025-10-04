@@ -60,3 +60,17 @@ apk add docker
 apk add docker-compose
 apk add rsync
 ```
+
+## For X11 Forwarding ##
+
+Followed this tuto <https://some-natalie.dev/blog/ssh-x11-forwarding/>
+
+Back'd up :
+
+* `/etc/ssh/sshd_config` into `/etc/ssh/sshd_config.bak`
+* `/etc/ssh/ssh_config` into `/etc/ssh/ssh_config`
+
+```sh
+apk add font-noto font-noto-cjk font-dejavu font-liberation font-adobe-100dpi fontconfig
+fc-cache -f -v
+```
