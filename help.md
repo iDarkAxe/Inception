@@ -42,10 +42,12 @@ ssh -p 2200 ppontet@127.0.0.1
 ## Pense bête ##
 
 ```sh
-ln -s ~/Documents/Inception/srcs/.dockerignore srcs/mariadb
-ln -s ~/Documents/Inception/srcs/.dockerignore srcs/nginx
-ln -s ~/Documents/Inception/srcs/.dockerignore srcs/wordpress
+ln -s ~/Documents/Inception/srcs/.dockerignore srcs/requirements/mariadb
+ln -s ~/Documents/Inception/srcs/.dockerignore srcs/requirements/nginx
+ln -s ~/Documents/Inception/srcs/.dockerignore srcs/requirements/wordpress
 ```
+
+To access the webpage : `http://localhost:4443/index.html`.
 
 ## List of commands ##
 
