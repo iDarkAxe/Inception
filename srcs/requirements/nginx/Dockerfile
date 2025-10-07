@@ -1,22 +1,31 @@
 # Use Alpine as the base image
 FROM alpine:3.21.4@sha256:b6a6be0ff92ab6db8acd94f5d1b7a6c2f0f5d10ce3c24af348d333ac6da80685
 
+# Basic files for nginx
 COPY nginx.conf /etc/nginx/nginx.conf
 COPY start.sh /start.sh
-COPY index.html /data/www/index.html
-
+RUN chmod +x /start.sh
 RUN apk update && apk upgrade && \
-    apk add --no-cache nginx openssl dumb-init
+    apk add --no-cache nginx dumb-init
 
-RUN openssl req -new -newkey rsa:4096 -nodes \
-    -keyout nginx.key -out nginx.crt \
-    -subj "/C=FR/ST=Rhone/L=Lyon/O=Dis/CN=ppontet.42.fr" \
+# Generate the .key and .crt for HTTPS
+RUN apk add openssl \
+    && mkdir -p /etc/ssl/private/ /etc/ssl/certs/ \
+    && openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
+    -keyout /etc/ssl/private/nginx-selfsigned.key \
+    -out /etc/ssl/certs/nginx-selfsigned.crt \
+    -subj "/C=FR/ST=Rhone/L=Lyon/O=42/OU=student/CN=ppontet.42.fr" \
     && apk del openssl
 
-RUN mv nginx.key /etc/ssl/nginx/nginx.key
-RUN mv nginx.crt /etc/ssl/nginx/nginx.crt
-
-RUN chmod +x /start.sh
+# Provide content to see now, will be replaced by wordpress
+# COPY index.html /data/www/index.html
+RUN apk add git \
+    && git clone -b documentation --single-branch https://github.com/iDarkAxe/Minishell.git /tmp/minishell \
+    && mkdir -p /data/www \
+    && mv /tmp/minishell/docs /tmp/minishell/www \
+    && mv /tmp/minishell/www /data/ \
+    && rm -rf /tmp/minishell \
+    && apk del git
 
 # Default HTTP port : automatically redirect on https port
 # EXPOSE 80

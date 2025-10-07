@@ -36,7 +36,7 @@ SSH port used is default but in VirtualBox it's forwarded on 2200.
 It's already accessible as ssh key is in the VM.
 
 ```sh
-ssh -X -p 2200 ppontet@127.0.0.1
+ssh -XC -p 2200 ppontet@127.0.0.1
 ```
 
 ## Pense bête ##
@@ -47,8 +47,11 @@ ln -s ~/Documents/Inception/srcs/.dockerignore srcs/requirements/nginx
 ln -s ~/Documents/Inception/srcs/.dockerignore srcs/requirements/wordpress
 ```
 
-To access the webpage from inside : `http://localhost:443/index.html`.
-To access the webpage from outside : `http://localhost:4443/index.html`.
+HTTP should redirect to HTTPS automatically, it ensures security.
+To access the webpage from inside : `https://localhost/index.html`. <br>
+You can also use `https://ppontet.42.fr` if you add this line in `/etc/hosts` : `127.0.0.1       ppontet.42.fr`.
+
+To access the webpage from outside : `https://localhost:4443/index.html`.
 It uses different port because port forwarding on of 443 and 80 on Virtualbox don't work.
 
 ## List of commands ##
