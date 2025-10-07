@@ -1,32 +1,67 @@
 services:
+# Web server : only access from outside
   nginx:
-    image: nginx
-    build: ./nginx
+    container_name: nginx
+    build: ./requirements/nginx
     networks:
       - basic-network
     ports:
-      - "80:80"
-    volumes:
-      - volume2:/website
-  mariadb:
-    image: mariadb
-    build: ./mariadb
-    networks:
-      - basic-network
-    volumes:
-      - volume1:/database
-  wordpress:
-    image: wordpress
-    build: ./wordpress
-    networks:
-      - basic-network
-    volumes:
-      - volume2:/website
+      - "443:443"
+    # volumes:
+    #   - volume-web:/website
+    # depends_on:
+    #   - mariadb
+    #   - wordpress
+    restart: always
+
+# # Relational Database (RDBMS)
+#   mariadb:
+#     container_name: mariadb
+#     build: ./requirements/mariadb
+#     networks:
+#       - basic-network
+#     volumes:
+#       - volume-db:/database
+#     secrets:
+#       - db_root_passwd
+#       - db_passwd
+#     environment:
+#       MYSQL_ROOT_PASSWORD_FILE: /run/secrets/db_root_passwd
+#       MYSQL_DATABASE: ${DB_NAME}
+#       MYSQL_USER: ${DB_USER}
+#       MYSQL_PASSWORD_FILE: /run/secrets/db_passwd
+#     restart: always
+
+# # Content Management System (CMS)
+#   wordpress:
+#     container_name: wordpress
+#     build: ./requirements/wordpress
+#     depends_on:
+#       - mariadb
+#     networks:
+#       - basic-network
+#     volumes:
+#       - volume-web:/website
+#     secrets:
+#       - db_passwd
+#     environment:
+#       WORDPRESS_DB_HOST: ${WORDPRESS_DB_HOST}
+#       WORDPRESS_DB_NAME: ${DB_NAME}
+#       WORDPRESS_DB_USER: ${DB_USER}
+#       WORDPRESS_DB_PASSWORD_FILE: /run/secrets/db_passwd
+#     restart: always
 
 volumes:
-  volume1: #wordpress database : mariadb
-  volume2: #wordpress website files
+  volume-db: #wordpress database : mariadb
+  volume-web: #wordpress website files
 
 networks:
   basic-network: # Accessible only by ports from nginx
     driver: bridge
+    internal: false
+
+secrets:
+  db_root_passwd:
+    file: ../secrets/db_root_password.txt
+  db_passwd:
+    file: ../secrets/db_password.txt
