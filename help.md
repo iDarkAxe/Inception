@@ -21,13 +21,13 @@ rsync -r ~/goinfre/Alpine ~/sgoinfre/ --progress
 If it's not present :
 
 ```sh
-rsync -r -e 'ssh -p 2200' ./* ppontet@127.0.0.1:~/Inception --progress
+rsync -r --copy-links -e 'ssh -p 2200' ~/Documents/Inception/* ppontet@127.0.0.1:~/Inception --progress
 ```
 
 To save your progress :
 
 ```sh
-rsync -r -e 'ssh -p 2200' ./Inception* ppontet@127.0.0.0:~/Documents/Inception/backup --progress
+rsync -r --copy-links -e 'ssh -p 2200' ./Inception* ppontet@127.0.0.0:~/Documents/Inception/backup --progress
 ```
 
 ## Some Vars ##
@@ -36,7 +36,7 @@ SSH port used is default but in VirtualBox it's forwarded on 2200.
 It's already accessible as ssh key is in the VM.
 
 ```sh
-ssh -p 2200 ppontet@127.0.0.1
+ssh -X -p 2200 ppontet@127.0.0.1
 ```
 
 ## Pense bête ##
@@ -47,7 +47,9 @@ ln -s ~/Documents/Inception/srcs/.dockerignore srcs/requirements/nginx
 ln -s ~/Documents/Inception/srcs/.dockerignore srcs/requirements/wordpress
 ```
 
-To access the webpage : `http://localhost:4443/index.html`.
+To access the webpage from inside : `http://localhost:443/index.html`.
+To access the webpage from outside : `http://localhost:4443/index.html`.
+It uses different port because port forwarding on of 443 and 80 on Virtualbox don't work.
 
 ## List of commands ##
 

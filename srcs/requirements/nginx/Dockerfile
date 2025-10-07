@@ -1,26 +1,25 @@
 # Use Alpine as the base image
-FROM alpine:3.22.1@sha256:4bcff63911fcb4448bd4fdacec207030997caf25e9bea4045fa6c8c44de311d1
+FROM alpine:3.21.4@sha256:b6a6be0ff92ab6db8acd94f5d1b7a6c2f0f5d10ce3c24af348d333ac6da80685
 
 COPY nginx.conf /etc/nginx/nginx.conf
 COPY start.sh /start.sh
-# COPY index.html /data/www/index.html
-COPY docs/ /data/www/
+COPY index.html /data/www/index.html
 
 RUN apk update && apk upgrade && \
     apk add --no-cache nginx openssl dumb-init
 
+RUN openssl req -new -newkey rsa:4096 -nodes \
+    -keyout nginx.key -out nginx.crt \
+    -subj "/C=FR/ST=Rhone/L=Lyon/O=Dis/CN=ppontet.42.fr" \
+    && apk del openssl
+
+RUN mv nginx.key /etc/ssl/nginx/nginx.key
+RUN mv nginx.crt /etc/ssl/nginx/nginx.crt
+
 RUN chmod +x /start.sh
 
-RUN apk add --no-cache git \
-    && git clone --depth 1 --filter=blob:none --sparse https://github.com/iDarkAxe/Minishell.git /tmp/minishell \
-    && cd /tmp/minishell \
-    && git sparse-checkout set docs \
-    && mv docs /data/www/ \
-    && rm -rf /tmp/minishell \
-    && apk del git
-
-# Default HTTP port
-EXPOSE 80
+# Default HTTP port : automatically redirect on https port
+# EXPOSE 80
 
 # Default HTTPS port
 EXPOSE 443

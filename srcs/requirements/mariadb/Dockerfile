@@ -1,5 +1,5 @@
 # Use Alpine as the base image
-FROM alpine:3.22.1@sha256:4bcff63911fcb4448bd4fdacec207030997caf25e9bea4045fa6c8c44de311d1
+FROM alpine:3.21.4@sha256:b6a6be0ff92ab6db8acd94f5d1b7a6c2f0f5d10ce3c24af348d333ac6da80685
 
 # Copy the main shell script to image
 COPY ["main.sh", "/usr/local/bin/"]
