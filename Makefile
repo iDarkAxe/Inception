@@ -10,7 +10,7 @@ all:
 	@$(MAKE) $(NAME)
 
 $(NAME):
-	docker compose -f srcs/compose.yml up -d --force-recreate
+	docker compose -f srcs/compose.yml up -d --force-recreate --remove-orphans
 
 ls: list
 list:
@@ -22,16 +22,10 @@ save:
 ssh:
 	$(SSH_CMD)
 
-create-context:
-	docker context create remote --docker "host=ssh://ppontet@127.0.0.1:2200"
-
-context:
-	@unset DOCKER_HOST
-	@docker context use remote
-
 debug-print:
 	@ls -Al -R --color=auto --ignore=.git
 
+# Special Variable testing to adapt commands if on Alpine VM or not
 HOST := $(shell hostname)
 ifeq ($(HOST),alpine)
     RSYNC_CMD = @echo "Already on Alpine, please only use HOST"
@@ -39,4 +33,10 @@ ifeq ($(HOST),alpine)
 else
     RSYNC_CMD = @echo "Sending all over SSH"; rsync -r --copy-links -e 'ssh -p 2200' ~/Documents/Inception/* ppontet@127.0.0.1:~/Inception --progress
 	SSH_CMD = ssh -XC -p 2200 ppontet@127.0.0.1
+start-vm:
+	virtualboxvm --startvm Alpine --separate
+stop-vm:
+	vboxmanage controlvm Alpine acpipowerbutton
+pull-vm:
+	rsync -r ~/sgoinfre/Alpine ~/goinfre/ --progress
 endif
