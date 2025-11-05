@@ -22,6 +22,20 @@ save:
 ssh:
 	$(SSH_CMD)
 
+stop:
+	docker stop $(shell docker ps -q)
+
+clean:
+	@$(MAKE) stop
+	docker system prune -a
+
+fclean:
+	@$(MAKE) clean
+
+re:
+	@$(MAKE) fclean
+	@$(MAKE) all
+
 debug-print:
 	@ls -Al -R --color=auto --ignore=.git
 
@@ -32,11 +46,13 @@ ifeq ($(HOST),alpine)
 	SSH_CMD = @echo "Already on Alpine, please use HOST to work"
 else
     RSYNC_CMD = @echo "Sending all over SSH"; rsync -r --copy-links -e 'ssh -p 2200' ~/Documents/Inception/* ppontet@127.0.0.1:~/Inception --progress
-	SSH_CMD = ssh -XC -p 2200 ppontet@127.0.0.1
+	SSH_CMD = ssh -XC -t -p 2200 ppontet@127.0.0.1 "cd ~/Inception && ash --login"
 start-vm:
-	virtualboxvm --startvm Alpine --separate
+	VBoxManage startvm "Alpine" --type headless
 stop-vm:
-	vboxmanage controlvm Alpine acpipowerbutton
+	VBoxManage controlvm "Alpine" acpipowerbutton
 pull-vm:
 	rsync -r ~/sgoinfre/Alpine ~/goinfre/ --progress
+push-vm:
+	rsync -r ~/goinfre/Alpine ~/sgoinfre/ --progress
 endif

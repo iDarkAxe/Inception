@@ -15,35 +15,43 @@ signal_terminate_trap() {
 
 trap "signal_terminate_trap" SIGTERM
 
-# Run
-if [ "$REQUEST" == "run" ]; then
-    echo "Starting MariaDB ..."
-    #
-    # Run MariaDB with exec bash command
-    exec mariadbd &
-    #
-    # Wait for MariaDB until stopped by Docker
-    wait $!
-    exit 1
-fi
+mariadb << EOF
+CREATE DATABASE wordpress;
+USE wordpress;
+CREATE TABLE Users (userid int NOT NULL AUTO_INCREMENT PRIMARY KEY, username varchar(255) NOT NULL, role varchar(255) NOT NULL);
+INSERT INTO Users (username, role) VALUES("ppontet", "admin");
+INSERT INTO Users (username, role) VALUES("tester", "user");
+EOF
 
-# Initialize
-if [ "$REQUEST" == "initialize" ]; then
-    initialize_status="MariaDB is already initialized"
+# # Run
+# if [ "$REQUEST" == "run" ]; then
+#     echo "Starting MariaDB ..."
+#     #
+#     # Run MariaDB with exec bash command
+#     exec mariadbd &
+#     #
+#     # Wait for MariaDB until stopped by Docker
+#     wait $!
+#     exit 1
+# fi
 
-    if [ ! -f "$DIR_DATA/ibdata1" ]; then
-        initialize_status="MariaDB initialization done"
+# # Initialize
+# if [ "$REQUEST" == "initialize" ]; then
+#     initialize_status="MariaDB is already initialized"
 
-        # Initialize MariaDB with mariadb-install-db
-        # https://mariadb.com/kb/en/mariadb-install-db/
-        mariadb-install-db \
-            --user=$USER \
-            --datadir=$DIR_DATA \
-            --auth-root-authentication-method=socket &
-        #
-        # Wait for mariadb-install-db until sucessfully done (exit)
-        wait $!
-    fi
+#     if [ ! -f "$DIR_DATA/ibdata1" ]; then
+#         initialize_status="MariaDB initialization done"
 
-    echo $initialize_status
-fi
+#         # Initialize MariaDB with mariadb-install-db
+#         # https://mariadb.com/kb/en/mariadb-install-db/
+#         mariadb-install-db \
+#             --user=$USER \
+#             --datadir=$DIR_DATA \
+#             --auth-root-authentication-method=socket &
+#         #
+#         # Wait for mariadb-install-db until sucessfully done (exit)
+#         wait $!
+#     fi
+
+#     echo $initialize_status
+# fi
