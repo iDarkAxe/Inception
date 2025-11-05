@@ -17,16 +17,6 @@ RUN apk add openssl \
     -subj "/C=FR/ST=Rhone/L=Lyon/O=42/OU=student/CN=ppontet.42.fr" \
     && apk del openssl
 
-# Provide content to see now, will be replaced by wordpress
-# COPY index.html /data/www/index.html
-RUN apk add git \
-    && git clone -b documentation --single-branch https://github.com/iDarkAxe/Minishell.git /tmp/minishell \
-    && mkdir -p /data/www \
-    && mv /tmp/minishell/docs /tmp/minishell/www \
-    && mv /tmp/minishell/www /data/ \
-    && rm -rf /tmp/minishell \
-    && apk del git
-
 # Default HTTP port : automatically redirect on https port
 # EXPOSE 80
 

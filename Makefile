@@ -10,7 +10,10 @@ all:
 	@$(MAKE) $(NAME)
 
 $(NAME):
-	docker compose -f srcs/compose.yml up -d --force-recreate --remove-orphans
+	docker compose -f srcs/compose.yml up -d --build --force-recreate --remove-orphans
+
+up:
+	docker compose -f srcs/compose.yml up -d
 
 ls: list
 list:
@@ -27,7 +30,10 @@ stop:
 
 clean:
 	@$(MAKE) stop
-	docker system prune -a
+	docker system prune --all -f
+
+clean-volumes:
+	docker volume rm $(shell docker volume ls -q)
 
 fclean:
 	@$(MAKE) clean

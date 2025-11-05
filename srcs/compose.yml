@@ -7,11 +7,11 @@ services:
       - basic-network
     ports:
       - "443:443"
-    # volumes:
-    #   - volume-web:/website
-    # depends_on:
-    #   - mariadb
-    #   - wordpress
+    volumes:
+      - volume-web:/website
+    depends_on:
+      - mariadb
+      - wordpress
     restart: always
 
 # Relational Database (RDBMS)
@@ -22,34 +22,33 @@ services:
       - basic-network
     volumes:
       - volume-db:/database
-#     secrets:
-#       - db_root_passwd
+    secrets:
+      - db_root_passwd
 #       - db_passwd
-#     environment:
-#       MYSQL_ROOT_PASSWORD_FILE: /run/secrets/db_root_passwd
-#       MYSQL_DATABASE: ${DB_NAME}
-#       MYSQL_USER: ${DB_USER}
-#       MYSQL_PASSWORD_FILE: /run/secrets/db_passwd
+    environment:
+      WORDPRESS_DB_PASSWORD_FILE: /run/secrets/db_root_passwd
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
     restart: always
 
-# # Content Management System (CMS)
-#   wordpress:
-#     container_name: wordpress
-#     build: ./requirements/wordpress
-#     depends_on:
-#       - mariadb
-#     networks:
-#       - basic-network
-#     volumes:
-#       - volume-web:/website
-#     secrets:
-#       - db_passwd
-#     environment:
-#       WORDPRESS_DB_HOST: ${WORDPRESS_DB_HOST}
-#       WORDPRESS_DB_NAME: ${DB_NAME}
-#       WORDPRESS_DB_USER: ${DB_USER}
-#       WORDPRESS_DB_PASSWORD_FILE: /run/secrets/db_passwd
-#     restart: always
+# Content Management System (CMS)
+  wordpress:
+    container_name: wordpress
+    build: ./requirements/wordpress
+    depends_on:
+      - mariadb
+    networks:
+      - basic-network
+    volumes:
+      - volume-web:/website
+    # secrets:
+    #   - db_passwd
+    environment:
+      WORDPRESS_DB_HOST: ${WORDPRESS_DB_HOST}
+      WORDPRESS_DB_NAME: ${MYSQL_DATABASE}
+      WORDPRESS_DB_USER: ${MYSQL_USER}
+      WORDPRESS_DB_PASSWORD_FILE: /run/secrets/db_passwd
+    restart: always
 
 volumes:
   volume-db: #wordpress database : mariadb
