@@ -8,9 +8,7 @@ RUN \
     # Add MariaDB packages
     apk add --no-cache mariadb mariadb-client && \
     # Give execute permission to main.sh
-    chmod +x /usr/local/bin/main.sh && \
-    mariadb-install-db --user=mysql --datadir=/var/lib/mysql && \
-    /usr/bin/mariadbd-safe --datadir='/var/lib/mysql' &
+    chmod +x /usr/local/bin/main.sh
 
 # Specify the start point of our image
 ENTRYPOINT ["main.sh"]

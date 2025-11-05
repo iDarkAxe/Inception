@@ -14,14 +14,14 @@ services:
     #   - wordpress
     restart: always
 
-# # Relational Database (RDBMS)
-#   mariadb:
-#     container_name: mariadb
-#     build: ./requirements/mariadb
-#     networks:
-#       - basic-network
-#     volumes:
-#       - volume-db:/database
+# Relational Database (RDBMS)
+  mariadb:
+    container_name: mariadb
+    build: ./requirements/mariadb
+    networks:
+      - basic-network
+    volumes:
+      - volume-db:/database
 #     secrets:
 #       - db_root_passwd
 #       - db_passwd
@@ -30,7 +30,7 @@ services:
 #       MYSQL_DATABASE: ${DB_NAME}
 #       MYSQL_USER: ${DB_USER}
 #       MYSQL_PASSWORD_FILE: /run/secrets/db_passwd
-#     restart: always
+    restart: always
 
 # # Content Management System (CMS)
 #   wordpress:

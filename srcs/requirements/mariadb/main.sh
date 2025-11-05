@@ -3,11 +3,9 @@
 set -e
 
 signal_terminate_trap() {
-    #
     # Shutdown MariaDB with mariadb-admin
     # https://mariadb.com/kb/en/mariadb-admin/
     mariadb-admin shutdown &
-    #
     # Wait for mariadb-admin until sucessfully done (exit)
     wait $!
     echo "MariaDB shut down successfully"
@@ -15,43 +13,58 @@ signal_terminate_trap() {
 
 trap "signal_terminate_trap" SIGTERM
 
-mariadb << EOF
-CREATE DATABASE wordpress;
-USE wordpress;
-CREATE TABLE Users (userid int NOT NULL AUTO_INCREMENT PRIMARY KEY, username varchar(255) NOT NULL, role varchar(255) NOT NULL);
-INSERT INTO Users (username, role) VALUES("ppontet", "admin");
-INSERT INTO Users (username, role) VALUES("tester", "user");
+if [ ! -d "/var/lib/mysql/mysql" ]; then
+    mariadb-install-db --user=mysql --datadir=/var/lib/mysql --basedir=/usr
+fi
+/usr/bin/mariadbd-safe --datadir='/var/lib/mysql' &
+PID=$!
+
+# Wait for MariaDB to be ready
+echo "Waiting for MariaDB to be ready..."
+until mariadb -e "SELECT 1" >/dev/null 2>&1; do
+    sleep 1
+done
+echo "MariaDB is ready!"
+
+echo "Initializing database..."
+if ! mariadb -e "SHOW DATABASES;" | grep -q "wordpress"; then
+    echo "Table Users not found, creating..."
+    mariadb << 'EOF'
+    CREATE DATABASE IF NOT EXISTS wordpress;
+    USE wordpress;
+    CREATE TABLE Users (
+        userid INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+        username VARCHAR(255) NOT NULL,
+        role VARCHAR(255) NOT NULL
+    );
+    INSERT INTO Users (username, role)
+        VALUES ("ppontet", "admin");
+    INSERT INTO Users (username, role) 
+        VALUES("tester", "user");
 EOF
+else
+    echo "Database already exists, skipping creation."
+fi
 
-# # Run
-# if [ "$REQUEST" == "run" ]; then
-#     echo "Starting MariaDB ..."
-#     #
-#     # Run MariaDB with exec bash command
-#     exec mariadbd &
-#     #
-#     # Wait for MariaDB until stopped by Docker
-#     wait $!
-#     exit 1
-# fi
+echo "Database initialized successfully!"
 
-# # Initialize
-# if [ "$REQUEST" == "initialize" ]; then
-#     initialize_status="MariaDB is already initialized"
+# Secure the database, as mariadb-secure-installation is ONLY interactive, doing the secure manually
+echo "Securing!"
+mariadb <<'EOF'
+-- Supprimer les utilisateurs anonymes
+DELETE FROM mysql.user WHERE User='';
 
-#     if [ ! -f "$DIR_DATA/ibdata1" ]; then
-#         initialize_status="MariaDB initialization done"
+# -- Interdire la connexion root depuis l’extérieur
+# UPDATE mysql.user SET Host='localhost' WHERE User='root' AND Host!='localhost';
 
-#         # Initialize MariaDB with mariadb-install-db
-#         # https://mariadb.com/kb/en/mariadb-install-db/
-#         mariadb-install-db \
-#             --user=$USER \
-#             --datadir=$DIR_DATA \
-#             --auth-root-authentication-method=socket &
-#         #
-#         # Wait for mariadb-install-db until sucessfully done (exit)
-#         wait $!
-#     fi
+-- Supprimer la base de test
+DROP DATABASE IF EXISTS test;
+DELETE FROM mysql.db WHERE Db='test' OR Db='test\_%';
 
-#     echo $initialize_status
-# fi
+-- Recharger les privilèges
+FLUSH PRIVILEGES;
+EOF
+echo "Database secured!"
+
+# Keep MariaDB running in the foreground
+wait $PID
