@@ -6,7 +6,7 @@ set -eu
 # Check that VARS are not empty and write a message if empty
 : "${MYSQL_DATABASE:?MYSQL_DATABASE not set}"
 : "${MYSQL_USER:?MYSQL_USER not set}"
-: "${WORDPRESS_DB_PASSWORD_FILE:?WORDPRESS_DB_PASSWORD_FILE not set}"
+: "${WORDPRESS_DB_PASSWORD:?WORDPRESS_DB_PASSWORD not set}"
 
 signal_terminate_trap() {
     # Shutdown MariaDB with mariadb-admin
@@ -35,7 +35,7 @@ echo "MariaDB is ready!"
 echo "Initializing database..."
 if ! mariadb -e "SHOW DATABASES;" | grep -q "$MYSQL_DATABASE"; then
     echo "Table Users not found, creating..."
-    mariadb << 'EOF'
+    mariadb << EOF
     CREATE DATABASE IF NOT EXISTS $MYSQL_DATABASE;
     USE $MYSQL_DATABASE;
     CREATE TABLE Users (
@@ -48,31 +48,28 @@ if ! mariadb -e "SHOW DATABASES;" | grep -q "$MYSQL_DATABASE"; then
     INSERT INTO Users (username, role) 
         VALUES("tester", "user");
 EOF
-else
-    echo "Database already exists, skipping creation."
-fi
-
-echo "Database initialized successfully!"
 
 # Secure the database, as mariadb-secure-installation is ONLY interactive, doing the secure manually
 echo "Securing!"
-mariadb <<'EOF'
+mariadb << EOF
 -- Supprimer les utilisateurs anonymes
 DELETE FROM mysql.user WHERE User='';
 
-# -- Interdire la connexion root depuis l’extérieur
-# UPDATE mysql.user SET Host='localhost' WHERE User='root' AND Host!='localhost';
-
 -- Supprimer la base de test
 DROP DATABASE IF EXISTS test;
-DELETE FROM mysql.db WHERE Db='test' OR Db='test\_%';
 
-GRANT ALL PRIVILEGES ON $MYSQL_DATABASE.* TO '$MYSQL_DATABASE'@'localhost' IDENTIFIED BY '$WORDPRESS_DB_PASSWORD_FILE';
+GRANT ALL PRIVILEGES ON $MYSQL_DATABASE.* TO '$WORDPRESS_DB_HOST' IDENTIFIED BY '$WORDPRESS_DB_PASSWORD';
 
 -- Recharger les privilèges
 FLUSH PRIVILEGES;
 EOF
 echo "Database secured!"
+
+else
+    echo "Database already exists and is secure, skipping creation."
+fi
+
+echo "Database initialized successfully!"
 
 # Stop temporary MariaDB
 mariadb-admin shutdown

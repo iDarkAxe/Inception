@@ -22,11 +22,8 @@ services:
       - basic-network
     volumes:
       - volume-db:/database
-    secrets:
-      - db_root_passwd
-#       - db_passwd
     environment:
-      WORDPRESS_DB_PASSWORD_FILE: /run/secrets/db_root_passwd
+      WORDPRESS_DB_PASSWORD: ${WORDPRESS_DB_PASSWORD}
       MYSQL_DATABASE: ${MYSQL_DATABASE}
       MYSQL_USER: ${MYSQL_USER}
     restart: always
@@ -41,26 +38,22 @@ services:
       - basic-network
     volumes:
       - volume-web:/website
-    # secrets:
-    #   - db_passwd
     environment:
       WORDPRESS_DB_HOST: ${WORDPRESS_DB_HOST}
       WORDPRESS_DB_NAME: ${MYSQL_DATABASE}
       WORDPRESS_DB_USER: ${MYSQL_USER}
-      WORDPRESS_DB_PASSWORD_FILE: /run/secrets/db_passwd
+      WORDPRESS_DB_PASSWORD: ${WORDPRESS_DB_PASSWORD}
     restart: always
 
 volumes:
   volume-db: #wordpress database : mariadb
+    name: "db"
+    # external: true
   volume-web: #wordpress website files
+    name: "web"
+    # external: true
 
 networks:
   basic-network: # Accessible only by ports from nginx
     driver: bridge
     internal: false
-
-secrets:
-  db_root_passwd:
-    file: ../secrets/db_root_password.txt
-  db_passwd:
-    file: ../secrets/db_password.txt

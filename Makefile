@@ -29,7 +29,6 @@ stop:
 	docker stop $(shell docker ps -q)
 
 clean:
-	@$(MAKE) stop
 	docker system prune --all -f
 
 clean-volumes:
@@ -51,7 +50,7 @@ ifeq ($(HOST),alpine)
     RSYNC_CMD = @echo "Already on Alpine, please only use HOST"
 	SSH_CMD = @echo "Already on Alpine, please use HOST to work"
 else
-    RSYNC_CMD = @echo "Sending all over SSH"; rsync -r --copy-links -e 'ssh -p 2200' ~/Documents/Inception/* ppontet@127.0.0.1:~/Inception --progress
+    RSYNC_CMD = @echo "Sending all over SSH"; rsync -r --copy-links -e 'ssh -p 2200' ~/Documents/Inception/* ppontet@127.0.0.1:~/Inception
 	SSH_CMD = ssh -XC -t -p 2200 ppontet@127.0.0.1 "cd ~/Inception && ash --login"
 start-vm:
 	VBoxManage startvm "Alpine" --type headless

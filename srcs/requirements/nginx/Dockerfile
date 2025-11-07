@@ -9,7 +9,7 @@ RUN apk update && apk upgrade && \
     apk add --no-cache nginx dumb-init
 
 # Generate the .key and .crt for HTTPS
-RUN apk add openssl \
+RUN apk add --no-cache openssl \
     && mkdir -p /etc/ssl/private/ /etc/ssl/certs/ \
     && openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
     -keyout /etc/ssl/private/nginx-selfsigned.key \
