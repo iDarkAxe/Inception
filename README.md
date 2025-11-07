@@ -24,12 +24,9 @@ You will need to use `docker`, if you don't have permissions to execute `docker 
 To properly setup the project, you need to create a `.env` file in `srcs/`. Fill the `here-*` with your values.
 
 ```txt
-DB_NAME=here-a-db-name
-DB_USER=here-a-user
 WORDPRESS_DB_HOST=here-a-db-host-name
+MYSQL_DATABASE=here-database-name
+MYSQL_USER=here-user-for-db
+WORDPRESS_DB_HOST=here-db-host:here-port
+WORDPRESS_DB_PASSWORD=here-password
 ```
-
-To use the secrets, create a folder `./secrets` and create two files inside (`db_password.txt` and `db_root_password.txt`).
-
-> [:warning: !WARNING :warning:] <br>
-> Please use strong password and don't push your .env or secrets. It's not safe.
