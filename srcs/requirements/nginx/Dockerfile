@@ -24,4 +24,5 @@ RUN apk add --no-cache openssl \
 EXPOSE 443
 
 # Specify the start point of our image
-ENTRYPOINT ["/start.sh"]
+ENTRYPOINT ["dumb-init", "--"]
+CMD ["nginx", "-g", "daemon off;"]

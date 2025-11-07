@@ -19,10 +19,10 @@ signal_terminate_trap() {
 
 trap "signal_terminate_trap" SIGTERM
 
-if [ ! -d "/var/lib/mysql/mysql" ]; then
-    mariadb-install-db --user=mysql --datadir=/var/lib/mysql --basedir=/usr
+if [ ! -d "/database/mysql" ]; then
+    mariadb-install-db --user=mysql --datadir=/database --basedir=/usr
 fi
-/usr/bin/mariadbd-safe --datadir='/var/lib/mysql' &
+/usr/bin/mariadbd-safe --datadir='/database' &
 PID=$!
 
 # Wait for MariaDB to be ready
@@ -38,15 +38,7 @@ if ! mariadb -e "SHOW DATABASES;" | grep -q "$MYSQL_DATABASE"; then
     mariadb << EOF
     CREATE DATABASE IF NOT EXISTS $MYSQL_DATABASE;
     USE $MYSQL_DATABASE;
-    CREATE TABLE Users (
-        userid INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-        username VARCHAR(255) NOT NULL,
-        role VARCHAR(255) NOT NULL
-    );
-    INSERT INTO Users (username, role)
-        VALUES ("$MYSQL_USER", "admin");
-    INSERT INTO Users (username, role) 
-        VALUES("tester", "user");
+    CREATE USER '$MYSQL_USER'@'%' IDENTIFIED BY '$WORDPRESS_DB_PASSWORD';
 EOF
 
 # Secure the database, as mariadb-secure-installation is ONLY interactive, doing the secure manually
@@ -58,7 +50,7 @@ DELETE FROM mysql.user WHERE User='';
 -- Supprimer la base de test
 DROP DATABASE IF EXISTS test;
 
-GRANT ALL PRIVILEGES ON $MYSQL_DATABASE.* TO '$WORDPRESS_DB_HOST' IDENTIFIED BY '$WORDPRESS_DB_PASSWORD';
+GRANT ALL PRIVILEGES ON $MYSQL_DATABASE.* TO '$MYSQL_USER'@'%';
 
 -- Recharger les privilèges
 FLUSH PRIVILEGES;
@@ -75,6 +67,5 @@ echo "Database initialized successfully!"
 mariadb-admin shutdown
 wait $PID || true
 
-# Relaunch MariaDB in foreground (PID 1)
 echo "Starting MariaDB in foreground..."
-exec /usr/bin/mariadbd-safe --datadir='/var/lib/mysql'
+exec /usr/bin/mariadbd-safe --datadir='/database'
