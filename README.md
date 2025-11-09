@@ -23,10 +23,11 @@ You will need to use `docker`, if you don't have permissions to execute `docker 
 
 To properly setup the project, you need to create a `.env` file in `srcs/`. Fill the `here-*` with your values.
 
+If you don't specify all the VARS, the build will stop. If you accept the risk, you can remove in the `compose.yml` file the `:?` after each environment varriable.
+
 ```txt
-WORDPRESS_DB_HOST=here-a-db-host-name
 MYSQL_DATABASE=here-database-name
 MYSQL_USER=here-user-for-db
-WORDPRESS_DB_HOST=here-db-host:here-port
 WORDPRESS_DB_PASSWORD=here-password
+WORDPRESS_DB_HOST=here-db-host:here-port
 ```

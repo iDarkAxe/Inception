@@ -1,6 +1,12 @@
 #!/bin/ash
 
-set -e
+set -eu
+
+# Check that VARS are not empty and write a message if empty
+: "${WORDPRESS_DB_NAME:?WORDPRESS_DB_NAME not set}"
+: "${WORDPRESS_DB_USER:?WORDPRESS_DB_USER not set}"
+: "${WORDPRESS_DB_PASSWORD:?WORDPRESS_DB_PASSWORD not set}"
+: "${WORDPRESS_DB_HOST:?WORDPRESS_DB_HOST not set}"
 
 # Si wp-config.php n’existe pas encore, le créer
 if [ ! -f /website/wordpress/wp-config.php ]; then
