@@ -2,7 +2,10 @@ services:
 # Web server : only access from outside
   nginx:
     container_name: nginx
-    build: ./requirements/nginx
+    build: 
+      context: ./requirements/nginx
+      args:
+        OPENSSL_SUBJ: ${OPENSSL_SUBJ:?}
     networks:
       - basic-network
     ports:

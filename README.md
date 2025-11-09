@@ -22,6 +22,7 @@ ssh -XC -p <port> <user>@<ip_address>
 You will need to use `docker`, if you don't have permissions to execute `docker compose` or anything related, please use a VM.
 
 To properly setup the project, you need to create a `.env` file in `srcs/`. Fill the `here-*` with your values.
+`OPENSSL_SUBJ` is only required for building images. `CN` as Common Name or server FQDN (Fully qualified domain name) could be simply `www.example.com`.
 
 If you don't specify all the VARS, the build will stop. If you accept the risk, you can remove in the `compose.yml` file the `:?` after each environment varriable.
 
@@ -30,4 +31,5 @@ MYSQL_DATABASE=here-database-name
 MYSQL_USER=here-user-for-db
 WORDPRESS_DB_PASSWORD=here-password
 WORDPRESS_DB_HOST=here-db-host:here-port
+OPENSSL_SUBJ=C=here-country/ST=here-state/L=here-locality/O=here-organisation/OU=here-organisation-unit/CN=here-common-name
 ```
