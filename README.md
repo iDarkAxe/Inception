@@ -41,7 +41,7 @@ make save
 
 ### List of commands ###
 
-For Alpine OS users, you should have not run in live mode, an install is better for repeatability. You will need theses tools for the project.
+For Alpine OS users, you should have not run in live mode, an install is better for repeatability. You also need to enable Community packages, remove the starting `#` in the file `/etc/apk/repositories`. You will need theses tools for the project.
 For other OSes, you can replace `apk add` with `apt install` or anything of your choice that uses a package manager.
 
 ```sh
@@ -50,10 +50,12 @@ poweroff
 ```
 
 ```sh
+apk update
 apk add nano
 apk add docker
 apk add docker-compose
 apk add rsync
+apk add make
 ```
 
 ### For X11 Forwarding ###
