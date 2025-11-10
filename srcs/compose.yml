@@ -6,6 +6,7 @@ services:
       context: ./requirements/nginx
       args:
         OPENSSL_SUBJ: ${OPENSSL_SUBJ:?}
+        URL: ${URL:?}
     networks:
       - basic-network
     ports:

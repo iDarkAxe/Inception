@@ -1,13 +1,13 @@
 # Use Alpine as the base image
 FROM alpine:3.21.4@sha256:b6a6be0ff92ab6db8acd94f5d1b7a6c2f0f5d10ce3c24af348d333ac6da80685
 
-# Basic files for nginx
-COPY start.sh /start.sh
-RUN chmod +x /start.sh
-
 RUN apk update && apk upgrade \
     && apk add --no-cache nginx dumb-init
 COPY nginx.conf /etc/nginx/nginx.conf
+ARG URL
+RUN test -n "$URL" \
+    || (echo "URL should be defined as username.domain.country-code" && exit 1)
+RUN sed -i -E "s/(server_name\s+)(www\.)?user[^\s;]*/\1\2$URL/g" /etc/nginx/nginx.conf
 
 ARG OPENSSL_SUBJ
 RUN test -n "$OPENSSL_SUBJ" \

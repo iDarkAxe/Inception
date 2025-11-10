@@ -24,6 +24,7 @@ MYSQL_USER=here-user-for-db
 WORDPRESS_DB_PASSWORD=here-password
 WORDPRESS_DB_HOST=here-db-host:here-port
 OPENSSL_SUBJ=C=here-country/ST=here-state/L=here-locality/O=here-organisation/OU=here-organisation-unit/CN=here-common-name
+URL=here-username.here-domain.here-country-code
 ```
 
 ## Virtual Machines ##

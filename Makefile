@@ -5,6 +5,8 @@ MAKE := $(MAKE) $(NO_DIR)
 NAME = inception
 
 P_SRC = srcs/
+REMOTE = $(shell whoami)@127.0.0.1
+SSH_PORT = 2200
 
 all:
 	@$(MAKE) $(NAME)
@@ -26,16 +28,24 @@ ssh:
 	$(SSH_CMD)
 
 stop:
+	docker stop mariadb nginx wordpress
+
+stop-all:
 	docker stop $(shell docker ps -q)
 
 clean:
+clean-all:
 	docker system prune --all -f
 
 clean-volumes:
+	docker volume rm web db
+
+clean-all-volumes:
 	docker volume rm $(shell docker volume ls -q)
 
 fclean:
-	@$(MAKE) clean
+	@$(MAKE) stop
+	@$(MAKE) clean-all
 
 re:
 	@$(MAKE) fclean
@@ -46,12 +56,16 @@ debug-print:
 
 # Special Variable testing to adapt commands if on Alpine VM or not
 HOST := $(shell hostname)
-ifeq ($(HOST),alpine)
-    RSYNC_CMD = @echo "Already on Alpine, please only use HOST"
-	SSH_CMD = @echo "Already on Alpine, please use HOST to work"
-else
-    RSYNC_CMD = @echo "Sending all over SSH"; rsync -r --copy-links -e 'ssh -p 2200' ~/Documents/Inception/* ppontet@127.0.0.1:~/Inception
-	SSH_CMD = ssh -XC -t -p 2200 ppontet@127.0.0.1 "cd ~/Inception && ash --login"
+ifeq ($(HOST),alpine) #on REMOTE
+
+RSYNC_CMD = @echo "Already on Alpine, please only use HOST"
+SSH_CMD = @echo "Already on Alpine, please use HOST to work"
+
+else #on HOST
+
+RSYNC_CMD = @echo "Sending all over SSH"; rsync -r --copy-links -e 'ssh -p $(SSH_PORT)' ~/Documents/Inception/* $(REMOTE):~/Inception
+SSH_CMD = ssh -XC -t -p $(SSH_PORT) $(REMOTE) "cd ~/Inception && sh --login"
+
 start-vm:
 	VBoxManage startvm "Alpine" --type headless
 stop-vm:
