@@ -35,18 +35,19 @@ services:
 # Content Management System (CMS)
   wordpress:
     container_name: wordpress
-    build: ./requirements/wordpress
+    build: 
+      context: ./requirements/wordpress
+      args:
+        WORDPRESS_DB_HOST: ${WORDPRESS_DB_HOST:?}
+        WORDPRESS_DB_NAME: ${MYSQL_DATABASE:?}
+        WORDPRESS_DB_USER: ${MYSQL_USER:?}
+        WORDPRESS_DB_PASSWORD: ${WORDPRESS_DB_PASSWORD:?}
     depends_on:
       - mariadb
     networks:
       - basic-network
     volumes:
       - volume-web:/website
-    environment:
-      WORDPRESS_DB_HOST: ${WORDPRESS_DB_HOST:?}
-      WORDPRESS_DB_NAME: ${MYSQL_DATABASE:?}
-      WORDPRESS_DB_USER: ${MYSQL_USER:?}
-      WORDPRESS_DB_PASSWORD: ${WORDPRESS_DB_PASSWORD:?}
     restart: always
 
 volumes:
