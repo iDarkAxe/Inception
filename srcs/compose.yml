@@ -6,6 +6,7 @@ services:
       context: ./requirements/nginx
       args:
         OPENSSL_SUBJ: ${OPENSSL_SUBJ:?}
+    environment:
         URL: ${URL:?}
     networks:
       - basic-network
@@ -32,16 +33,16 @@ services:
       MYSQL_USER: ${MYSQL_USER:?}
     restart: always
 
-# Content Management System (CMS)
+# Content Management System (CMS) and PHP-FPM
   wordpress:
     container_name: wordpress
     build: 
       context: ./requirements/wordpress
-      args:
-        WORDPRESS_DB_HOST: ${WORDPRESS_DB_HOST:?}
-        WORDPRESS_DB_NAME: ${MYSQL_DATABASE:?}
-        WORDPRESS_DB_USER: ${MYSQL_USER:?}
-        WORDPRESS_DB_PASSWORD: ${WORDPRESS_DB_PASSWORD:?}
+    environment:
+      WORDPRESS_DB_HOST: ${WORDPRESS_DB_HOST:?}
+      WORDPRESS_DB_NAME: ${MYSQL_DATABASE:?}
+      WORDPRESS_DB_USER: ${MYSQL_USER:?}
+      WORDPRESS_DB_PASSWORD: ${WORDPRESS_DB_PASSWORD:?}
     depends_on:
       - mariadb
     networks:

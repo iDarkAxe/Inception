@@ -63,7 +63,7 @@ SSH_CMD = @echo "Already on Alpine, please use HOST to work"
 
 else #on HOST
 
-RSYNC_CMD = @echo "Sending all over SSH"; rsync -r --copy-links -e 'ssh -p $(SSH_PORT)' ~/Documents/Inception/* $(REMOTE):~/Inception
+RSYNC_CMD = @echo "Sending all over SSH"; rsync -r --copy-links -e 'ssh -p $(SSH_PORT)' ~/Documents/Inception/ $(REMOTE):~/Inception
 SSH_CMD = ssh -XC -t -p $(SSH_PORT) $(REMOTE) "cd ~/Inception && sh --login"
 
 start-vm:
