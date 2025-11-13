@@ -15,8 +15,16 @@ services:
     volumes:
       - volume-web:/website
     depends_on:
-      - mariadb
-      - wordpress
+      mariadb:
+        condition: service_healthy
+      wordpress:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsk https://localhost/ | grep -q . || exit 1"]
+      interval: 10s
+      timeout: 5s
+      start_period: 10s
+      retries: 3
     restart: always
 
 # Relational Database (RDBMS)
@@ -31,6 +39,11 @@ services:
       WORDPRESS_DB_PASSWORD: ${WORDPRESS_DB_PASSWORD:?}
       MYSQL_DATABASE: ${MYSQL_DATABASE:?}
       MYSQL_USER: ${MYSQL_USER:?}
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 5s
+      start_period: 5s
+      retries: 10
     restart: always
 
 # Content Management System (CMS) and PHP-FPM
@@ -43,12 +56,19 @@ services:
       WORDPRESS_DB_NAME: ${MYSQL_DATABASE:?}
       WORDPRESS_DB_USER: ${MYSQL_USER:?}
       WORDPRESS_DB_PASSWORD: ${WORDPRESS_DB_PASSWORD:?}
-    depends_on:
-      - mariadb
     networks:
       - basic-network
     volumes:
       - volume-web:/website
+    depends_on:
+      mariadb:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "pgrep php-fpm && nc -z 127.0.0.1 9000 || exit 1"]
+      interval: 5s
+      timeout: 5s
+      start_period: 10s
+      retries: 10
     restart: always
 
 volumes:
