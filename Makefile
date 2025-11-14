@@ -7,6 +7,8 @@ NAME = inception
 P_SRC = srcs/
 REMOTE = $(shell whoami)@127.0.0.1
 SSH_PORT = 2200
+SERVICES_NAMES = mariadb nginx wordpress
+VOLUMES_NAMES = db web
 
 all:
 	@$(MAKE) $(NAME)
@@ -28,7 +30,7 @@ ssh:
 	$(SSH_CMD)
 
 stop:
-	docker stop mariadb nginx wordpress
+	docker stop $(SERVICES_NAMES)
 
 stop-all:
 	docker stop $(shell docker ps -q)
@@ -38,7 +40,7 @@ clean-all:
 	docker system prune --all -f
 
 clean-volumes:
-	docker volume rm web db
+	docker volume rm $(VOLUMES_NAMES)
 
 clean-all-volumes:
 	docker volume rm $(shell docker volume ls -q)
