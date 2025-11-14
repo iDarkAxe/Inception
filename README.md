@@ -25,6 +25,12 @@ WORDPRESS_DB_PASSWORD=here-password
 WORDPRESS_DB_HOST=here-db-host:here-port
 OPENSSL_SUBJ=C=here-country/ST=here-state/L=here-locality/O=here-organisation/OU=here-organisation-unit/CN=here-common-name
 URL=here-username.here-domain.here-country-code
+WORDPRESS_ADMIN_USERNAME=here-admin-username
+WORDPRESS_ADMIN_PASSWORD=here-admin-password
+WORDPRESS_ADMIN_EMAIL=here-admin-email
+WORDPRESS_BASIC_USER_USERNAME=here-basic-username
+WORDPRESS_BASIC_USER_PASSWORD=here-basic-password
+WORDPRESS_BASIC_USER_EMAIL=here-basic-email
 ```
 
 ## Virtual Machines ##
