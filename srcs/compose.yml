@@ -20,7 +20,7 @@ services:
       wordpress:
         condition: service_healthy
     healthcheck:
-      test: ["CMD-SHELL", "curl -fsk https://localhost/ | grep -q . || exit 1"]
+      test: ["CMD-SHELL", "curl -fsk https://localhost/static/ | grep -q . || exit 1"]
       interval: 10s
       timeout: 5s
       start_period: 20s
@@ -56,6 +56,13 @@ services:
       WORDPRESS_DB_NAME: ${MYSQL_DATABASE:?}
       WORDPRESS_DB_USER: ${MYSQL_USER:?}
       WORDPRESS_DB_PASSWORD: ${WORDPRESS_DB_PASSWORD:?}
+      URL: ${URL:?}
+      WORDPRESS_ADMIN_USERNAME: ${WORDPRESS_ADMIN_USERNAME:?}
+      WORDPRESS_ADMIN_PASSWORD: ${WORDPRESS_ADMIN_PASSWORD:?}
+      WORDPRESS_ADMIN_EMAIL: ${WORDPRESS_ADMIN_EMAIL:?}
+      WORDPRESS_BASIC_USER_USERNAME: ${WORDPRESS_BASIC_USER_USERNAME:?}
+      WORDPRESS_BASIC_USER_PASSWORD: ${WORDPRESS_BASIC_USER_PASSWORD:?}
+      WORDPRESS_BASIC_USER_EMAIL: ${WORDPRESS_BASIC_USER_EMAIL:?}
     networks:
       - basic-network
     volumes:
@@ -74,10 +81,18 @@ services:
 volumes:
   volume-db: #wordpress database : mariadb
     name: "db"
-    # external: true
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: "${HOST_DATA_PATH}/data/db"
   volume-web: #wordpress website files
     name: "web"
-    # external: true
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: "${HOST_DATA_PATH}/data/web"
 
 networks:
   basic-network: # Accessible only by ports from nginx

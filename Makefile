@@ -4,7 +4,7 @@ MAKE := $(MAKE) $(NO_DIR)
 # MAKE := $(MAKE) -j $(NO_DIR)
 NAME = inception
 
-P_SRC = srcs/
+USER = $(shell whoami)
 REMOTE = $(shell whoami)@127.0.0.1
 SSH_PORT = 2200
 SERVICES_NAMES = mariadb nginx wordpress
@@ -14,9 +14,11 @@ all:
 	@$(MAKE) $(NAME)
 
 $(NAME):
+	mkdir -p /home/$(USER)/data/db /home/$(USER)/data/web
 	docker compose -f srcs/compose.yml up -d --build --force-recreate --remove-orphans
 
 up:
+	mkdir -p /home/$(USER)/data/db /home/$(USER)/data/web
 	docker compose -f srcs/compose.yml up -d
 
 ls: list
