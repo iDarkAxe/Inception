@@ -91,7 +91,7 @@ services:
       context: ./requirements/adminer
     volumes:
       - volume-web:/website
-    restart: none
+    restart: no
 
   static_pages:
     container_name: static_pages
@@ -99,7 +99,7 @@ services:
       context: ./requirements/static_pages
     volumes:
       - volume-static:/static
-    restart: none
+    restart: no
 
 volumes:
   volume-db: #wordpress database : mariadb
