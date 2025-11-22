@@ -18,9 +18,6 @@ RUN apk add --no-cache openssl \
     -subj "$OPENSSL_SUBJ" \
     && apk del openssl
 
-RUN mkdir -p /static
-COPY readme.html /static/
-
 COPY start.sh /start.sh
 RUN chmod +x /start.sh
 

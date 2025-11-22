@@ -9,17 +9,20 @@ REMOTE = $(shell whoami)@127.0.0.1
 SSH_PORT = 2200
 SERVICES_NAMES = mariadb nginx wordpress
 VOLUMES_NAMES = db web
+SERVICES_NAMES_BONUS = mariadb nginx wordpress adminer static_pages
+VOLUMES_NAMES_BONUS = db web static
 
 all:
 	@$(MAKE) $(NAME)
 
 $(NAME):
-	mkdir -p /home/$(USER)/data/db /home/$(USER)/data/web
-	docker compose -f srcs/compose.yml up -d --build --force-recreate --remove-orphans
+	$(NAME_CMD)
+
+bonus:
+	$(BONUS_CMD)
 
 up:
-	mkdir -p /home/$(USER)/data/db /home/$(USER)/data/web
-	docker compose -f srcs/compose.yml up -d
+	$(UP_CMD)
 
 ls: list
 list:
@@ -34,6 +37,9 @@ ssh:
 stop:
 	docker stop $(SERVICES_NAMES)
 
+stop-bonus:
+	docker stop $(SERVICES_NAMES_BONUS)
+
 stop-all:
 	docker stop $(shell docker ps -q)
 
@@ -43,6 +49,9 @@ clean-all:
 
 clean-volumes:
 	docker volume rm $(VOLUMES_NAMES)
+
+clean-volumes-bonus:
+	docker volume rm $(VOLUMES_NAMES_BONUS)
 
 clean-all-volumes:
 	docker volume rm $(shell docker volume ls -q)
@@ -64,11 +73,23 @@ ifeq ($(HOST),alpine) #on REMOTE
 
 RSYNC_CMD = @echo "Already on Alpine, please only use HOST"
 SSH_CMD = @echo "Already on Alpine, please use HOST to work"
+NAME_CMD = \
+	mkdir -p /home/$(USER)/data/db /home/$(USER)/data/web && \
+	docker compose -f srcs/compose.yml up -d --build --force-recreate --remove-orphans
+BONUS_CMD = \
+	mkdir -p /home/$(USER)/data/db /home/$(USER)/data/web /home/$(USER)/data/static && \
+	docker compose -f srcs/compose_bonus.yml up -d --build --force-recreate --remove-orphans
+UP_CMD = \
+	mkdir -p /home/$(USER)/data/db /home/$(USER)/data/web /home/$(USER)/data/static && \
+	docker compose -f srcs/compose.yml up -d
 
 else #on HOST
 
 RSYNC_CMD = @echo "Sending all over SSH"; rsync -r --copy-links -e 'ssh -p $(SSH_PORT)' ~/Documents/Inception/ $(REMOTE):~/Inception
 SSH_CMD = ssh -XC -t -p $(SSH_PORT) $(REMOTE) "cd ~/Inception && sh --login"
+NAME_CMD = @echo "$(NAME) Should be executed on Alpine VM only"
+BONUS_CMD = @echo "bonus Should be executed on Alpine VM only"
+UP_CMD = @echo "up Should be executed on Alpine VM only"
 
 start-vm:
 	VBoxManage startvm "Alpine" --type headless

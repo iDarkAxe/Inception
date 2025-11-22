@@ -15,9 +15,6 @@ RUN apk add --no-cache php83 php83-phar php83-iconv php-mbstring curl \
 	&& chmod +x wp-cli.phar \
 	&& mv wp-cli.phar /usr/local/bin/wp 
 
-RUN wget https://github.com/vrana/adminer/releases/download/v5.4.1/adminer-5.4.1.php \
-	&& mv adminer-5.4.1.php /website/wordpress/adminer.php
-
 COPY main.sh /main.sh
 RUN chmod +x /main.sh
 

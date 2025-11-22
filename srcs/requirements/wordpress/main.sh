@@ -17,7 +17,9 @@ set -eu
 : "${WP_INSTALL_PATH:?WP_INSTALL_PATH not set}"
 
 if ! wp core is-installed --path=${WP_INSTALL_PATH} --url="${URL}"; then
-    rm ${WP_INSTALL_PATH}/wp-config.php
+    if [ -f ${WP_INSTALL_PATH}/wp-config.php ]; then
+        rm ${WP_INSTALL_PATH}/wp-config.php
+    fi
     wp config create \
         --dbname="${WORDPRESS_DB_NAME}" \
         --dbuser="${WORDPRESS_DB_USER}" \
