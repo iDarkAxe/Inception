@@ -101,6 +101,19 @@ services:
       - volume-static:/static
     restart: no
 
+  ftp_server:
+    container_name: ftp
+    build: 
+      context: ./requirements/ftp_server
+    environment:
+      USER_NAME: ${USER_NAME:?}
+      USER_PASSWORD: ${USER_PASSWORD:?}
+    ports:
+      - "2021:21"
+    volumes:
+      - volume-web:/var/ftp/website
+    restart: always
+
 volumes:
   volume-db: #wordpress database : mariadb
     name: "db"

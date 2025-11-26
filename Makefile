@@ -9,7 +9,7 @@ REMOTE = $(shell whoami)@127.0.0.1
 SSH_PORT = 2200
 SERVICES_NAMES = mariadb nginx wordpress
 VOLUMES_NAMES = db web
-SERVICES_NAMES_BONUS = mariadb nginx wordpress adminer static_pages
+SERVICES_NAMES_BONUS = mariadb nginx wordpress adminer static_pages ftp
 VOLUMES_NAMES_BONUS = db web static
 
 all:
