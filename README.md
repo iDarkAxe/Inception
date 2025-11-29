@@ -32,6 +32,8 @@ WORDPRESS_BASIC_USER_USERNAME=here-basic-username
 WORDPRESS_BASIC_USER_PASSWORD=here-basic-password
 WORDPRESS_BASIC_USER_EMAIL=here-basic-email
 WP_INSTALL_PATH=/path/of/wordpress
+FTP_USERNAME=here-ftp-username
+FTP_PASSWORD=here-ftp-password
 ```
 
 ## Virtual Machines ##

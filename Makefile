@@ -11,6 +11,7 @@ SERVICES_NAMES = mariadb nginx wordpress
 VOLUMES_NAMES = db web
 SERVICES_NAMES_BONUS = mariadb nginx wordpress adminer static_pages ftp
 VOLUMES_NAMES_BONUS = db web static
+MOUNT_PATH = /home/$(USER)/data/
 
 all:
 	@$(MAKE) $(NAME)
@@ -47,6 +48,16 @@ clean:
 clean-all:
 	docker system prune --all -f
 
+rm-volumes:
+	@read -p "Êtes-vous sûr de vouloir supprimer $(MOUNT_PATH) ? [y/N] " confirm && \
+	if [ "$$confirm" = "y" ] || [ "$$confirm" = "Y" ]; then \
+		doas rm -rf $(MOUNT_PATH) && \
+		echo "Dossier supprimé" || \
+		echo "Erreur lors de la suppression"; \
+	else \
+		echo "Annulé"; \
+	fi
+
 clean-volumes:
 	docker volume rm $(VOLUMES_NAMES)
 
@@ -56,8 +67,13 @@ clean-volumes-bonus:
 clean-all-volumes:
 	docker volume rm $(shell docker volume ls -q)
 
+reset:
+	@$(MAKE) stop-all || true
+	@$(MAKE) clean-all  || true
+	@$(MAKE) clean-all-volumes || true
+	@$(MAKE) rm-volumes
+
 fclean:
-	@$(MAKE) stop
 	@$(MAKE) clean-all
 
 re:
