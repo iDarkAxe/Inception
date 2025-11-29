@@ -85,7 +85,7 @@ UP_CMD = \
 
 else #on HOST
 
-RSYNC_CMD = @echo "Sending all over SSH"; rsync -r --copy-links -e 'ssh -p $(SSH_PORT)' ~/Documents/Inception/ $(REMOTE):~/Inception
+RSYNC_CMD = @echo "Sending all over SSH"; rsync -r --copy-links -e 'ssh -p $(SSH_PORT)' $(shell pwd)/ $(REMOTE):~/Inception
 SSH_CMD = ssh -XC -t -p $(SSH_PORT) $(REMOTE) "cd ~/Inception && sh --login"
 NAME_CMD = @echo "$(NAME) Should be executed on Alpine VM only"
 BONUS_CMD = @echo "bonus Should be executed on Alpine VM only"
