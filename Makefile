@@ -49,14 +49,7 @@ clean-all:
 	docker system prune --all -f
 
 rm-volumes:
-	@read -p "Êtes-vous sûr de vouloir supprimer $(MOUNT_PATH) ? [y/N] " confirm && \
-	if [ "$$confirm" = "y" ] || [ "$$confirm" = "Y" ]; then \
-		doas rm -rf $(MOUNT_PATH) && \
-		echo "Dossier supprimé" || \
-		echo "Erreur lors de la suppression"; \
-	else \
-		echo "Annulé"; \
-	fi
+	$(RM_VOLUMES)
 
 clean-volumes:
 	docker volume rm $(VOLUMES_NAMES)
@@ -90,22 +83,32 @@ ifeq ($(HOST),alpine) #on REMOTE
 RSYNC_CMD = @echo "Already on Alpine, please only use HOST"
 SSH_CMD = @echo "Already on Alpine, please use HOST to work"
 NAME_CMD = \
-	mkdir -p /home/$(USER)/data/db /home/$(USER)/data/web && \
+	@mkdir -p /home/$(USER)/data/db /home/$(USER)/data/web && \
 	docker compose -f srcs/compose.yml up -d --build --force-recreate --remove-orphans
 BONUS_CMD = \
-	mkdir -p /home/$(USER)/data/db /home/$(USER)/data/web /home/$(USER)/data/static && \
+	@mkdir -p /home/$(USER)/data/db /home/$(USER)/data/web /home/$(USER)/data/static && \
 	docker compose -f srcs/compose_bonus.yml up -d --build --force-recreate --remove-orphans
 UP_CMD = \
-	mkdir -p /home/$(USER)/data/db /home/$(USER)/data/web /home/$(USER)/data/static && \
+	@mkdir -p /home/$(USER)/data/db /home/$(USER)/data/web /home/$(USER)/data/static && \
 	docker compose -f srcs/compose.yml up -d
+RM_VOLUMES = \
+	@read -p "Êtes-vous sûr de vouloir supprimer $(MOUNT_PATH) ? [y/N] " confirm && \
+	if [ "$$confirm" = "y" ] || [ "$$confirm" = "Y" ]; then \
+		doas rm -rf $(MOUNT_PATH) && \
+		echo "Dossier supprimé" || \
+		echo "Erreur lors de la suppression"; \
+	else \
+		echo "Annulé"; \
+	fi
 
 else #on HOST
 
 RSYNC_CMD = @echo "Sending all over SSH"; rsync -r --copy-links -e 'ssh -p $(SSH_PORT)' $(shell pwd)/ $(REMOTE):~/Inception
-SSH_CMD = ssh -XC -t -p $(SSH_PORT) $(REMOTE) "cd ~/Inception && sh --login"
+SSH_CMD = @ssh -XC -t -p $(SSH_PORT) $(REMOTE) "cd ~/Inception && sh --login"
 NAME_CMD = @echo "$(NAME) Should be executed on Alpine VM only"
 BONUS_CMD = @echo "bonus Should be executed on Alpine VM only"
 UP_CMD = @echo "up Should be executed on Alpine VM only"
+RM_VOLUMES = @echo "rm-volumes Should be executed on Alpine VM only"
 
 start-vm:
 	VBoxManage startvm "Alpine" --type headless
