@@ -1,4 +1,4 @@
-#!/bin/ash
+#!/usr/bin/dumb-init /bin/ash
 
 # -e = exit on error, -u = undefined var = error
 set -eu
