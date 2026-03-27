@@ -88,3 +88,19 @@ ssh -XC -p <port> <user>@<ip_address>
 - `X` means that X11 will forward applications to the client (you).
 - `C` means that it will attemps to compress data (it helps reduce network bandwith but increase CPU usage).
 - `p` is useful if you already are using default port of ssh (22).
+
+### Resources ###
+
+- <https://wiki.alpinelinux.org/wiki/Nginx>
+- <https://wiki.alpinelinux.org/wiki/MariaDB>
+- <https://wiki.alpinelinux.org/wiki/WordPress>
+- <https://kinsta.com/fr/blog/adminer/>
+- <https://wiki.alpinelinux.org/wiki/FTP>
+- <https://technologytales.com/turning-off-seccomp-sandbox-in-vsftpd/>
+- <https://wp-cli.org/fr/>
+- <https://make.wordpress.org/cli/handbook/guides/installing/>
+- <https://www.php.net/manual/en/book.phar.php>
+- <https://docs.docker.com/compose/how-tos/environment-variables/variable-interpolation/> : for required environnment variables in `compose.yml`
+- <https://docs.docker.com/reference/compose-file/services/#healthcheck>
+- <https://docs.docker.com/engine/storage/bind-mounts/>
+- <https://nginx.org/en/docs/http/ngx_http_fastcgi_module.html>
