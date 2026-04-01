@@ -13,28 +13,35 @@ The only way to access the containers is by accessing the url from the nginx ser
 
 You will need to use `docker`, if you don't have permissions to execute `docker compose` or anything related, please use a VM.
 
-To properly setup the project, you need to create a `.env` file in `srcs/`. Fill the `here-*` with your values.
+To properly setup the project, you need to create a `.env` file in `srcs/`. Fill the `here_*` with your values. You can also just modify the `.env.template` file into `.env` and modify the values.
 `OPENSSL_SUBJ` is only required for building images. `CN` as Common Name or server FQDN (Fully qualified domain name) could be simply `www.example.com`.
 
 If you don't specify all the VARS, the build will stop. If you accept the risk, you can remove in the `compose.yml` file the `:?` after each environment varriable.
 
 ```txt
-MYSQL_DATABASE=here-database-name
-MYSQL_USER=here-user-for-db
-WORDPRESS_DB_PASSWORD=here-password
-WORDPRESS_DB_HOST=here-db-host:here-port
-OPENSSL_SUBJ=C=here-country/ST=here-state/L=here-locality/O=here-organisation/OU=here-organisation-unit/CN=here-common-name
-URL=here-username.here-domain.here-country-code
-WORDPRESS_ADMIN_USERNAME=here-admin-username
-WORDPRESS_ADMIN_PASSWORD=here-admin-password
-WORDPRESS_ADMIN_EMAIL=here-admin-email
-WORDPRESS_BASIC_USER_USERNAME=here-basic-username
-WORDPRESS_BASIC_USER_PASSWORD=here-basic-password
-WORDPRESS_BASIC_USER_EMAIL=here-basic-email
+MYSQL_DATABASE=here_database_name
+MYSQL_USER=here_user_for_db
+WORDPRESS_DB_PASSWORD=here_password
+WORDPRESS_DB_HOST=here_db_host:here_port
+OPENSSL_SUBJ=/C=here_country/ST=here_state/L=here_locality/O=here_organisation/OU=here_organisation_unit/CN=here_common_name
+URL=here_username.here_domain.here_country_code
+WORDPRESS_ADMIN_USERNAME=here_admin_username
+WORDPRESS_ADMIN_PASSWORD=here_admin_password
+WORDPRESS_ADMIN_EMAIL=here_admin_email@domain.com
+WORDPRESS_BASIC_USER_USERNAME=here_basic_username
+WORDPRESS_BASIC_USER_PASSWORD=here_basic_password
+WORDPRESS_BASIC_USER_EMAIL=here_basic_email@domain.com
 WP_INSTALL_PATH=/path/of/wordpress
-FTP_USERNAME=here-ftp-username
-FTP_PASSWORD=here-ftp-password
+FTP_USERNAME=here_ftp_username
+FTP_PASSWORD=here_ftp_password
+HOST_DATA_PATH=/here_path
 ```
+
+### Examples ###
+
+-  `WORDPRESS_DB_HOST`=`mariadb:3306`, a service name is also hostname
+-  `WP_INSTALL_PATH`=`/website/wordpress`
+-  `HOST_DATA_PATH`=`/home/login/`
 
 ## Virtual Machines ##
 
